@@ -1,0 +1,6 @@
+data/
+exports/
+venv/
+__pycache__/
+*.pt
+*.pyc
