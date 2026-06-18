@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+venv/
+.venv/
+
+# ML artifacts
+*.pt
+*.pth
+*.ckpt
+*.onnx
+checkpoints/
+exports/
+runs/
+logs/
+output/
+wandb/
+
+# Shared dataset cache
+/data/
+
+# Unreleased apps (kept locally, not tracked)
+/backbone-benchmark/
+/cv-detection-playground/
+/cv-segmentation-playground/
+
+# OS
+.DS_Store
+Thumbs.db
