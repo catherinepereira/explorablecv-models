@@ -1,6 +1,6 @@
 # vit-playground-export
 
-Exports ViT-tiny to ONNX for the [vit-playground](../../explorables-mono/apps/vit-playground)
+Exports ViT-tiny to ONNX for the [vit-playground](../../explorablecv/apps/vit-playground)
 demo, with the intermediate tensors the demo visualizes added as named outputs.
 
 ## What it does
@@ -19,6 +19,10 @@ It writes `model.onnx` and `imagenet_classes.json` into the demo's
   the CLS token and positions are added (the demo shows these per patch)
 - `attention_0` .. `attention_11`, `[1, 3, 197, 197]` each, the post-softmax
   attention per layer, used for attention rollout
+- `query_0` .. `query_11`, `key_0` .. `key_11`, `value_0` .. `value_11`,
+  `[1, 3, 197, 64]` each, the per-head Q/K/V projections behind those attention
+  maps. `softmax(q @ k^T / sqrt(64))` reproduces `attention_L`, which is how the
+  explorer shows the dot-product score behind one query patch's weight
 
 Input: `pixel_values` `[1, 3, 224, 224]`, ImageNet-normalized RGB, NCHW.
 
