@@ -20,8 +20,9 @@ Model training and ONNX export code for the [explorablecv](../explorablecv) comp
 - `data_paths.py`: resolves the shared data root
 
 Datasets land in a shared `data/` cache at the repo root so every app reads from one place. Override the
-location with the `EXPLORABLECV_DATA` environment variable. The shared scripts only populate the cache.
-Each app keeps its own loaders, so no app depends on another.
+location with the `EXPLORABLECV_DATA` environment variable, or pass `--dest` for a private copy
+(cv-interpretability does, since its preprocess renames class dirs in place). The shared scripts only
+populate the cache. Each app keeps its own loaders, so no app depends on another.
 
 ```bash
 python scripts/download_cifar10.py

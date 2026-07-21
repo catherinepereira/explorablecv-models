@@ -6,12 +6,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import torchvision
 from PIL import Image
 
-DATA_DIR = Path(__file__).parent.parent / 'data' / 'raw'
-OUT_DIR = Path(__file__).parent.parent.parent / 'cnn-architecture-comparison' / 'public' / 'samples'
+from model.constants import CIFAR10_LABELS
 
-CIFAR10_LABELS = [
-    'airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck',
-]
+DATA_DIR = Path(__file__).parent.parent / 'data' / 'raw'
+OUT_DIR = (
+    Path(__file__).resolve().parents[3]
+    / 'explorablecv/apps/cnn-architecture-comparison/public/samples'
+)
 
 
 def main():

@@ -24,7 +24,7 @@ def main():
     ckpt = args.checkpoint or str(out_dir / f"{args.model}.pt")
 
     model = build_model(args.model, pretrained=False).to(dev)
-    model.load_state_dict(torch.load(ckpt, map_location=dev))
+    model.load_state_dict(torch.load(ckpt, map_location=dev, weights_only=True))
     model.eval()
 
     root = imagenette_root(args.data)

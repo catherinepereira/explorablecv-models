@@ -76,7 +76,7 @@ def main() -> None:
     args.out.mkdir(parents=True, exist_ok=True)
 
     model = SmallCNN(num_classes=10).to(args.device)
-    state = torch.load(args.ckpt, map_location=args.device)
+    state = torch.load(args.ckpt, map_location=args.device, weights_only=True)
     model.load_state_dict(state["model"])
     model.eval()
 

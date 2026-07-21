@@ -10,17 +10,9 @@ from tqdm import tqdm
 from lime import lime_image
 from skimage.segmentation import slic
 
-from _common import device
+from _common import device, quantize
 from model.builders import build_model, MODEL_NAMES
 from model.constants import IMAGENETTE_CLASSES, IMAGE_SIZE, IMAGENET_MEAN, IMAGENET_STD
-
-
-def quantize(map2d: np.ndarray, size: int = 64) -> list[list[int]]:
-    h, w = map2d.shape
-    factor_h = h // size
-    factor_w = w // size
-    down = map2d[: factor_h * size, : factor_w * size].reshape(size, factor_h, size, factor_w).mean(axis=(1, 3))
-    return down.astype(np.uint8).tolist()
 
 
 def make_predict_fn(model, dev):
@@ -53,7 +45,7 @@ def main():
 
     model = build_model(args.model, pretrained=False).to(dev)
     ckpt = args.checkpoint or f"exports/{args.model}.pt"
-    model.load_state_dict(torch.load(ckpt, map_location=dev))
+    model.load_state_dict(torch.load(ckpt, map_location=dev, weights_only=True))
     model.eval()
 
     explainer = lime_image.LimeImageExplainer()
@@ -84,7 +76,7 @@ def main():
             "id": item["id"],
             "model": args.model,
             "pred_class": IMAGENETTE_CLASSES[int(label)],
-            "heatmap": quantize(heatmap_u8),
+            "heatmap": quantize(heatmap_u8, scale=1.0),
         })
 
     (out / f"{args.model}.json").write_text(json.dumps(records))

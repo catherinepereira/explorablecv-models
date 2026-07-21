@@ -17,7 +17,7 @@ import numpy as np
 import onnxruntime as ort
 from PIL import Image
 
-ROOT = Path(__file__).resolve().parents[3] / "explorables-mono/apps/vit-playground"
+ROOT = Path(__file__).resolve().parents[3] / "explorablecv/apps/vit-playground"
 SAMPLES_DIR = ROOT / "public/samples"
 MODEL_PATH = ROOT / "public/models/vit-tiny/model.onnx"
 OUT_DIR = ROOT / "public/samples/precomputed"

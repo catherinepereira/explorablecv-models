@@ -5,19 +5,11 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.nn.functional as F
-from PIL import Image
 from tqdm import tqdm
 
-from _common import device
+from _common import device, load_image, quantize
 from model.builders import build_model, target_layer_for_cam, MODEL_NAMES
-from model.constants import IMAGENETTE_CLASSES, IMAGE_SIZE, IMAGENET_MEAN, IMAGENET_STD
-
-
-def load_image(path: Path) -> torch.Tensor:
-    img = Image.open(path).convert("RGB").resize((IMAGE_SIZE, IMAGE_SIZE))
-    arr = np.asarray(img).astype(np.float32) / 255.0
-    arr = (arr - np.array(IMAGENET_MEAN)) / np.array(IMAGENET_STD)
-    return torch.from_numpy(arr.transpose(2, 0, 1)).float().unsqueeze(0)
+from model.constants import IMAGENETTE_CLASSES, IMAGE_SIZE
 
 
 class GradCAM:
@@ -61,13 +53,9 @@ class GradCAM:
         return cam
 
 
-def score_cam(model, x: torch.Tensor, target_layer, target_idx: int, dev) -> np.ndarray:
-    activations = []
-    h = target_layer.register_forward_hook(lambda _m, _i, o: activations.append(o.detach()))
-    with torch.no_grad():
-        model(x)
-    h.remove()
-    a = activations[0]
+def score_cam(model, x: torch.Tensor, a: torch.Tensor, target_idx: int, dev) -> np.ndarray:
+    # a is the target layer's activations for x, captured during the caller's
+    # prediction forward, so this skips a redundant full pass per image
     if a.ndim == 4:
         a = F.interpolate(a, size=(IMAGE_SIZE, IMAGE_SIZE), mode="bilinear", align_corners=False)
         c = a.shape[1]
@@ -110,15 +98,6 @@ def saliency_map(model, x: torch.Tensor, target_idx: int) -> np.ndarray:
     return grad
 
 
-def quantize(map2d: np.ndarray, size: int = 64) -> list[list[int]]:
-    h, w = map2d.shape
-    factor_h = h // size
-    factor_w = w // size
-    down = map2d[: factor_h * size, : factor_w * size].reshape(size, factor_h, size, factor_w).mean(axis=(1, 3))
-    arr = (down * 255).astype(np.uint8)
-    return arr.tolist()
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", required=True, choices=MODEL_NAMES)
@@ -134,7 +113,7 @@ def main():
 
     model = build_model(args.model, pretrained=False).to(dev)
     ckpt = args.checkpoint or f"exports/{args.model}.pt"
-    model.load_state_dict(torch.load(ckpt, map_location=dev))
+    model.load_state_dict(torch.load(ckpt, map_location=dev, weights_only=True))
     model.eval()
 
     manifest = json.loads((Path(args.samples) / "manifest.json").read_text())
@@ -148,6 +127,9 @@ def main():
             x = load_image(img_path).to(dev)
             with torch.no_grad():
                 probs = F.softmax(model(x), dim=1)[0].cpu().numpy()
+            # The GradCAM forward hook fired during that pass, so the target
+            # layer's activations for x are already captured for Score-CAM
+            acts = gradcam.activations
             pred_idx = int(probs.argmax())
             entry = {
                 "id": item["id"],
@@ -161,7 +143,7 @@ def main():
             if "gradcam" in args.methods:
                 entry["maps"]["gradcam"] = quantize(gradcam(x, pred_idx))
             if "scorecam" in args.methods:
-                entry["maps"]["scorecam"] = quantize(score_cam(model, x, target_layer, pred_idx, dev))
+                entry["maps"]["scorecam"] = quantize(score_cam(model, x, acts, pred_idx, dev))
             if "saliency" in args.methods:
                 entry["maps"]["saliency"] = quantize(saliency_map(model, x, pred_idx))
             records.append(entry)

@@ -2,22 +2,13 @@ import argparse
 import json
 from pathlib import Path
 
-import numpy as np
 import torch
 import torch.nn.functional as F
-from PIL import Image
 from tqdm import tqdm
 
-from _common import device
+from _common import device, load_image, quantize
 from model.builders import build_model, MODEL_NAMES
-from model.constants import IMAGENETTE_CLASSES, IMAGE_SIZE, IMAGENET_MEAN, IMAGENET_STD
-
-
-def load_image(path: Path) -> torch.Tensor:
-    img = Image.open(path).convert("RGB").resize((IMAGE_SIZE, IMAGE_SIZE))
-    arr = np.asarray(img).astype(np.float32) / 255.0
-    arr = (arr - np.array(IMAGENET_MEAN)) / np.array(IMAGENET_STD)
-    return torch.from_numpy(arr.transpose(2, 0, 1)).float().unsqueeze(0)
+from model.constants import IMAGENETTE_CLASSES, IMAGE_SIZE
 
 
 def patched_attn_forward(self, x: torch.Tensor, *_args, **_kwargs) -> torch.Tensor:
@@ -87,15 +78,6 @@ def rollout(model, x: torch.Tensor, discard_ratio: float = 0.0):
     return cam, probs
 
 
-def quantize(map2d: np.ndarray, size: int = 64) -> list[list[int]]:
-    h, w = map2d.shape
-    factor_h = h // size
-    factor_w = w // size
-    down = map2d[: factor_h * size, : factor_w * size].reshape(size, factor_h, size, factor_w).mean(axis=(1, 3))
-    arr = (down * 255).astype(np.uint8)
-    return arr.tolist()
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default="vit_s", choices=MODEL_NAMES)
@@ -114,7 +96,7 @@ def main():
 
     model = build_model(args.model, pretrained=False).to(dev)
     ckpt = args.checkpoint or f"exports/{args.model}.pt"
-    model.load_state_dict(torch.load(ckpt, map_location=dev))
+    model.load_state_dict(torch.load(ckpt, map_location=dev, weights_only=True))
     model.eval()
     handles = install_attn_capture(model)
 

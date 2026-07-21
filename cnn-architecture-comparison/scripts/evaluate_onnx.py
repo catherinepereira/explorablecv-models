@@ -11,12 +11,10 @@ import torchvision
 import torchvision.transforms as T
 
 from model import ARCHITECTURES
+from model.constants import CIFAR10_MEAN, CIFAR10_STD
 
 EXPORT_DIR = Path(__file__).parent.parent / 'exports'
 DATA_DIR = Path(__file__).parent.parent / 'data' / 'raw'
-
-CIFAR10_MEAN = (0.4914, 0.4822, 0.4465)
-CIFAR10_STD = (0.2470, 0.2435, 0.2616)
 
 
 def evaluate(arch_name: str, n: int = 1000):
@@ -28,7 +26,7 @@ def evaluate(arch_name: str, n: int = 1000):
 
     Model = ARCHITECTURES[arch_name]
     pt_model = Model()
-    pt_model.load_state_dict(torch.load(ckpt_path, map_location='cpu'))
+    pt_model.load_state_dict(torch.load(ckpt_path, map_location='cpu', weights_only=True))
     pt_model.eval()
 
     session = ort.InferenceSession(str(onnx_path), providers=['CPUExecutionProvider'])

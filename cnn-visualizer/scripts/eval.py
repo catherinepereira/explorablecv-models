@@ -33,7 +33,7 @@ def main() -> None:
     _, test_loader = get_loaders(args.data_root, batch_size=args.batch_size, workers=2)
 
     model = SmallCNN(num_classes=10).to(args.device)
-    state = torch.load(args.ckpt, map_location=args.device)
+    state = torch.load(args.ckpt, map_location=args.device, weights_only=True)
     model.load_state_dict(state["model"])
     model.eval()
 

@@ -9,11 +9,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from model.builders import MODEL_NAMES
 from model.constants import IMAGENETTE_CLASSES
 
+# Resolved from this file so the default works regardless of cwd
+DEFAULT_FRONTEND = (
+    Path(__file__).resolve().parents[3]
+    / "explorablecv/apps/cv-interpretability/public"
+)
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--exports", default="exports")
-    parser.add_argument("--frontend", default="../cv-interpretability/public")
+    parser.add_argument("--frontend", default=str(DEFAULT_FRONTEND))
     args = parser.parse_args()
 
     exports = Path(args.exports)

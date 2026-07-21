@@ -13,11 +13,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from model import ARCHITECTURES
-
-# Per-channel (R, G, B) mean/std of the CIFAR-10 train set, used to standardize inputs for stable optimization
-# Must match the values baked into export_onnx.py so inference preprocessing stays in sync
-CIFAR10_MEAN = (0.4914, 0.4822, 0.4465)
-CIFAR10_STD = (0.2470, 0.2435, 0.2616)
+from model.constants import CIFAR10_MEAN, CIFAR10_STD
 
 DATA_DIR = Path(__file__).parent.parent / 'data' / 'raw'
 EXPORT_DIR = Path(__file__).parent.parent / 'exports'

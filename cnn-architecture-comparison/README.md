@@ -1,6 +1,6 @@
 # cnn-architecture-comparison-model
 
-Training repo for [cnn-architecture-comparison](../cnn-architecture-comparison). Trains six CNN architectures on CIFAR-10 and exports them to ONNX with intermediate feature map outputs.
+Training repo for [cnn-architecture-comparison](../../explorablecv/apps/cnn-architecture-comparison). Trains six CNN architectures on CIFAR-10 and exports them to ONNX with intermediate feature map outputs.
 
 ## Setup
 
@@ -45,8 +45,8 @@ Checks that argmax matches and prints max numerical drift between the PyTorch an
 ## Deploy to the frontend
 
 ```powershell
-copy exports\*.onnx ..\cnn-architecture-comparison\public\models\
-copy exports\model_meta.json ..\cnn-architecture-comparison\public\models\
+copy exports\*.onnx ..\..\explorablecv\apps\cnn-architecture-comparison\public\models\
+copy exports\model_meta.json ..\..\explorablecv\apps\cnn-architecture-comparison\public\models\
 ```
 
 ## License

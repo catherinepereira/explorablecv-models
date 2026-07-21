@@ -1,6 +1,6 @@
 # cnn-from-scratch-model
 
-Generates model and activations for [`cnn-visualizer`](https://github.com/catherinepereira/cnn-visualizer/), a static site that visualizes the trained model's activations layer by layer.
+Generates model and activations for [`cnn-visualizer`](../../explorablecv/apps/cnn-visualizer), a static site that visualizes the trained model's activations layer by layer.
 
 ## Important Files
 
@@ -22,7 +22,7 @@ python train.py --out checkpoints/run1 --epochs 30
 python scripts/eval.py --ckpt checkpoints/run1/best.pt --out checkpoints/run1
 python scripts/export_activations.py \
     --ckpt checkpoints/run1/best.pt \
-    --out ../cnn-visualizer/public/activations
+    --out ../../explorablecv/apps/cnn-visualizer/public/activations
 ```
 
 CIFAR-10 downloads automatically into `data/` on first run (~170 MB).

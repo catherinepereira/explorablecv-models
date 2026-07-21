@@ -9,12 +9,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import torch
 
 from model import ARCHITECTURES
+from model.constants import CIFAR10_LABELS, CIFAR10_MEAN, CIFAR10_STD
 
 EXPORT_DIR = Path(__file__).parent.parent / 'exports'
-
-CIFAR10_LABELS = [
-    'airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck',
-]
 
 
 def export(arch_name: str, out_dir: Path):
@@ -24,7 +21,7 @@ def export(arch_name: str, out_dir: Path):
 
     Model = ARCHITECTURES[arch_name]
     model = Model()
-    model.load_state_dict(torch.load(ckpt, map_location='cpu'))
+    model.load_state_dict(torch.load(ckpt, map_location='cpu', weights_only=True))
     model.eval()
 
     output_names = Model.export_outputs()
@@ -50,8 +47,8 @@ def write_meta(out_dir: Path):
         'labels': CIFAR10_LABELS,
         'input_shape': [3, 32, 32],
         'normalization': {
-            'mean': [0.4914, 0.4822, 0.4465],
-            'std': [0.2470, 0.2435, 0.2616],
+            'mean': list(CIFAR10_MEAN),
+            'std': list(CIFAR10_STD),
         },
         'exported_at': datetime.now().isoformat(),
     }

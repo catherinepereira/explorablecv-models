@@ -1,8 +1,8 @@
 """Download Imagenette (or Imagewoof) into the shared data cache.
 
 Imagenette is a 10-class subset of ImageNet from fast.ai. Used by cv-interpretability
-and vit-playground. Consolidates the per-app downloader that lived in
-cv-interpretability-model/scripts/download_data.py.
+and vit-playground. Pass --dest for a private copy: cv-interpretability's preprocess
+step renames class dirs in place, which must not touch the shared cache.
 """
 
 import argparse
@@ -41,10 +41,19 @@ def _safe_extract(tf: tarfile.TarFile, dest: Path) -> None:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--variant", choices=sorted(VARIANTS), default="imagenette")
+    parser.add_argument(
+        "--dest",
+        default=None,
+        help="download here instead of the shared cache",
+    )
     args = parser.parse_args()
 
     url = VARIANTS[args.variant]
-    out = dataset_dir(args.variant)
+    if args.dest:
+        out = Path(args.dest)
+        out.mkdir(parents=True, exist_ok=True)
+    else:
+        out = dataset_dir(args.variant)
     archive = out / url.rsplit("/", 1)[-1]
     extracted = out / archive.stem
 

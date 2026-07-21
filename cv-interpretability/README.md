@@ -1,6 +1,6 @@
 # CV Interpretability Model
 
-Training code for three ImageNette classifiers (Custom CNN, ResNet-18, ViT-S) plus the scripts that precompute interpretability outputs (Grad-CAM, Score-CAM, saliency, LIME, and attention rollout for ViT) and UMAP embeddings for the [cv-interpretability](../cv-interpretability) viewer.
+Training code for three ImageNette classifiers (Custom CNN, ResNet-18, ViT-S) plus the scripts that precompute interpretability outputs (Grad-CAM, Score-CAM, saliency, LIME, and attention rollout for ViT) and UMAP embeddings for the [cv-interpretability](../../explorablecv/apps/cv-interpretability) viewer.
 
 The viewer is a static site, so this repo emits everything as JSON and a bundle script copies the artifacts into the frontend's `public/` directory.
 
@@ -19,7 +19,7 @@ CUDA is assumed for training. Inference paths in this repo will fall back to CPU
 ImageNette (160px or full-res variant, the loader resizes to 224 either way).
 
 ```bash
-python scripts/download_data.py
+python ../scripts/download_imagenette.py --dest data/raw
 python scripts/preprocess_imagenette.py
 ```
 
@@ -66,8 +66,11 @@ CAM outputs are quantized to a 64x64 uint8 grid per image, small enough that all
 ## Bundle for the frontend
 
 ```bash
-python scripts/bundle_for_frontend.py --frontend ../cv-interpretability/public
+python scripts/bundle_for_frontend.py
 ```
+
+The default destination is the frontend's `public/` in the sibling `explorablecv`
+repo. Pass `--frontend` to bundle elsewhere.
 
 This step copies:
 - `samples/*.jpg`           thumbnail images

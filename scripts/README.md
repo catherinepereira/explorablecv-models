@@ -13,7 +13,11 @@ so a download is reused rather than repeated per app. Override the location with
 python scripts/download_cifar10.py
 python scripts/download_imagenette.py                 # imagenette (default)
 python scripts/download_imagenette.py --variant imagewoof
+python scripts/download_imagenette.py --dest cv-interpretability/data/raw
 ```
+
+cv-interpretability uses `--dest` for a private copy: its preprocess step renames
+class directories in place, which must not touch the shared cache.
 
 These scripts only populate the shared cache. Each app keeps its own data loaders and points them at the
 shared root through `EXPLORABLECV_DATA`, so no app imports another app's code.
