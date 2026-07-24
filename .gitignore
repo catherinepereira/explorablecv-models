@@ -24,7 +24,6 @@ wandb/
 
 # Unreleased apps (kept locally, not tracked)
 /backbone-benchmark/
-/cv-detection-playground/
 /cv-segmentation-playground/
 
 # OS
