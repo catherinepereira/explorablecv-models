@@ -8,7 +8,9 @@ Model training and ONNX export code for the [explorablecv](../explorablecv) comp
 | --- | --- | --- |
 | [cnn-architecture-comparison](cnn-architecture-comparison) | cnn-architecture-comparison | CIFAR-10 classifiers (LeNet, AlexNet, VGG, ResNet, ...) exported to ONNX |
 | [cnn-visualizer](cnn-visualizer) | cnn-visualizer | A small CNN plus per-layer activation dumps for the visualizer |
+| [cv-detection-playground](cv-detection-playground) | cv-detection-playground | YOLOv8n exported to ONNX with raw per-anchor output |
 | [cv-interpretability](cv-interpretability) | cv-interpretability | Imagenette classifier plus CAM / LIME / attention-rollout / UMAP bundles |
+| [cv-segmentation-playground](cv-segmentation-playground) | cv-segmentation-playground | Semantic, instance, and panoptic segmentation ONNX exports plus precomputed sample results |
 | [vit-playground](vit-playground) | vit-playground | ViT-tiny exported with logits, patch embeddings, per-layer attention |
 
 ## Shared scripts and data

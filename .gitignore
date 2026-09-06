@@ -24,7 +24,6 @@ wandb/
 
 # Unreleased apps (kept locally, not tracked)
 /backbone-benchmark/
-/cv-segmentation-playground/
 
 # OS
 .DS_Store

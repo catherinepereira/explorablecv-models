@@ -10,7 +10,7 @@ demo.
 which is what lets its confidence and NMS-IoU sliders work live. It writes
 `model.onnx` into the demo's `public/models/yolov8n/`.
 
-## ONNX contract
+## Model I/O
 
 - Input: `images` `[1, 3, 640, 640]`, RGB, scaled by 1/255, NCHW. The demo
   letterboxes the source image (gray 114 padding, aspect preserved) before
